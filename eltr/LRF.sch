@@ -1,0 +1,211 @@
+EESchema Schematic File Version 2
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:LRF-cache
+EELAYER 25 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L PN2222A Q1
+U 1 1 598F19B4
+P 5650 2900
+F 0 "Q1" H 5850 2975 50  0000 L CNN
+F 1 "PN2222A" H 5850 2900 50  0000 L CNN
+F 2 "TO_SOT_Packages_THT:TO-92_Inline_Narrow_Oval" H 5850 2825 50  0001 L CIN
+F 3 "" H 5650 2900 50  0000 L CNN
+	1    5650 2900
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR01
+U 1 1 598F1A4E
+P 5750 3650
+F 0 "#PWR01" H 5750 3400 50  0001 C CNN
+F 1 "GND" H 5750 3500 50  0000 C CNN
+F 2 "" H 5750 3650 50  0000 C CNN
+F 3 "" H 5750 3650 50  0000 C CNN
+	1    5750 3650
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R2
+U 1 1 598F1A70
+P 5750 3400
+F 0 "R2" V 5830 3400 50  0000 C CNN
+F 1 "10K" V 5750 3400 50  0000 C CNN
+F 2 "Resistors_ThroughHole:Resistor_Horizontal_RM7mm" V 5680 3400 50  0001 C CNN
+F 3 "" H 5750 3400 50  0000 C CNN
+	1    5750 3400
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R1
+U 1 1 598F1A93
+P 5300 2900
+F 0 "R1" V 5380 2900 50  0000 C CNN
+F 1 "100" V 5300 2900 50  0000 C CNN
+F 2 "Resistors_ThroughHole:Resistor_Horizontal_RM7mm" V 5230 2900 50  0001 C CNN
+F 3 "" H 5300 2900 50  0000 C CNN
+	1    5300 2900
+	0    1    1    0   
+$EndComp
+$Comp
+L D D1
+U 1 1 598F1BB0
+P 5750 2400
+F 0 "D1" H 5750 2500 50  0000 C CNN
+F 1 "Laser diode" H 5750 2300 50  0000 C CNN
+F 2 "Diodes_ThroughHole:Diode_TO-220_Vertical" H 5750 2400 50  0001 C CNN
+F 3 "" H 5750 2400 50  0000 C CNN
+	1    5750 2400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L +5V #PWR02
+U 1 1 598F1BF7
+P 5750 2150
+F 0 "#PWR02" H 5750 2000 50  0001 C CNN
+F 1 "+5V" H 5750 2290 50  0000 C CNN
+F 2 "" H 5750 2150 50  0000 C CNN
+F 3 "" H 5750 2150 50  0000 C CNN
+	1    5750 2150
+	1    0    0    -1  
+$EndComp
+$Comp
+L +5V #PWR03
+U 1 1 598F1C17
+P 4250 1700
+F 0 "#PWR03" H 4250 1550 50  0001 C CNN
+F 1 "+5V" H 4250 1840 50  0000 C CNN
+F 2 "" H 4250 1700 50  0000 C CNN
+F 3 "" H 4250 1700 50  0000 C CNN
+	1    4250 1700
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR04
+U 1 1 598F1C3D
+P 4650 1950
+F 0 "#PWR04" H 4650 1700 50  0001 C CNN
+F 1 "GND" H 4650 1800 50  0000 C CNN
+F 2 "" H 4650 1950 50  0000 C CNN
+F 3 "" H 4650 1950 50  0000 C CNN
+	1    4650 1950
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR05
+U 1 1 598F1F93
+P 4650 2250
+F 0 "#PWR05" H 4650 2000 50  0001 C CNN
+F 1 "GND" H 4650 2100 50  0000 C CNN
+F 2 "" H 4650 2250 50  0000 C CNN
+F 3 "" H 4650 2250 50  0000 C CNN
+	1    4650 2250
+	1    0    0    -1  
+$EndComp
+Text GLabel 4600 2700 2    60   Input ~ 0
+GPIO
+Text GLabel 5000 2900 0    60   Input ~ 0
+GPIO
+Wire Wire Line
+	5000 2900 5150 2900
+Wire Wire Line
+	5750 2250 5750 2150
+Wire Wire Line
+	5750 2550 5750 2700
+Wire Wire Line
+	5750 3100 5750 3250
+Wire Wire Line
+	5750 3550 5750 3650
+$Comp
+L PWR_FLAG #FLG06
+U 1 1 598F235E
+P 5600 2150
+F 0 "#FLG06" H 5600 2245 50  0001 C CNN
+F 1 "PWR_FLAG" H 5600 2330 50  0000 C CNN
+F 2 "" H 5600 2150 50  0000 C CNN
+F 3 "" H 5600 2150 50  0000 C CNN
+	1    5600 2150
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	5750 2150 5600 2150
+$Comp
+L CONN_01X04 P1
+U 1 1 598F2665
+P 4050 2000
+F 0 "P1" H 4050 2250 50  0000 C CNN
+F 1 "CONN_01X04" V 4150 2000 50  0000 C CNN
+F 2 "Socket_Strips:Socket_Strip_Straight_1x04" H 4050 2000 50  0001 C CNN
+F 3 "" H 4050 2000 50  0000 C CNN
+	1    4050 2000
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	4250 1850 4250 1700
+Wire Wire Line
+	4250 1950 4650 1950
+Wire Wire Line
+	4250 2050 4500 2050
+Wire Wire Line
+	4500 2050 4500 2250
+Wire Wire Line
+	4500 2250 4800 2250
+Wire Wire Line
+	4250 2150 4400 2150
+Wire Wire Line
+	4400 2150 4400 2700
+Wire Wire Line
+	4400 2700 4600 2700
+$Comp
+L PWR_FLAG #FLG07
+U 1 1 598F27B5
+P 4800 2250
+F 0 "#FLG07" H 4800 2345 50  0001 C CNN
+F 1 "PWR_FLAG" H 4800 2430 50  0000 C CNN
+F 2 "" H 4800 2250 50  0000 C CNN
+F 3 "" H 4800 2250 50  0000 C CNN
+	1    4800 2250
+	0    1    1    0   
+$EndComp
+Connection ~ 4650 2250
+$EndSCHEMATC
