@@ -24,6 +24,8 @@ camera.framerate = 30
 camera.led = False
 rawCapture = PiRGBArray(camera, size=imgDimensions)
 
+syscfg = {'D': 24, 'f': -3.6, 'k': 0.0014} # all in mm
+
 screen = None
 
 clock = pygame.time.Clock ()
@@ -70,6 +72,14 @@ def stickImg (img, update = False, screen_frame = 0):
 def stickSpot (spot, update = False):
 	pygame.draw.line (screen, (255,0,0), (spot[0], spot[1]-5), (spot[0], spot[1]+5), 2)
 	pygame.draw.line (screen, (255,0,0), (spot[0]-5, spot[1]), (spot[0]+5, spot[1]), 2)
+	textSurface = myfont.render ('X' + str(spot[0]) + ' Y' + str(spot[1]), True, (255,255,255))
+	screen.blit (textSurface, tuple(map(sum,zip(forthFrame, (30,40)))))
+	if update:
+		pygame.display.update()
+
+def stickDistance (text, update = False):
+	textSurface = myfont.render (text, True, (255,255,255))
+	screen.blit (textSurface, tuple(map(sum,zip(forthFrame,(30,70)))))
 	if update:
 		pygame.display.update()
 
@@ -150,6 +160,12 @@ def __main__ ():
 		laserSpot = getSpot (mask)
 		if laserSpot is not None:
 			stickSpot (laserSpot)
+			p = laserSpot[0] - imgDimensions[0]/2
+			if p != 0:
+				distance = syscfg['f'] * (syscfg['D'] / (syscfg['k']*p))
+			else:
+				distance = 'INF'
+			stickDistance ('Distance: ' + distance + 'cm')
 
 		stickFPS ('FPS ' + str(clock.get_fps()))
 		if laser_on:
