@@ -11,8 +11,8 @@ import cv2
 
 os.environ['SDL_VIDEODRIVER'] = 'fbcon'
 
-imgDimensions = (320, 240)
-
+imgDimensions = (640, 480)
+imgFrame = None
 firstFrame = None
 secondFrame = None
 thirdFrame = None
@@ -44,10 +44,12 @@ def laserOFF ():
 def initializePygame ():
 	global screen, myfont
 	global firstFrame, secondFrame, thirdFrame, forthFrame
+	global imgFrame
 
 	pygame.init()
 	infoObj = pygame.display.Info ()
-	#pygame.mouse.set_visible (False)
+	imgFrame = (infoObj.current_w / 2, infoObj.current_h / 2)
+	pygame.mouse.set_visible (False)
 	screen = pygame.display.set_mode ((infoObj.current_w, infoObj.current_h), 0, 32)
 	# Using default system font so that set it None
 	myfont = pygame.font.SysFont (None, 30)
@@ -58,20 +60,24 @@ def initializePygame ():
 
 def stickImg (img, update = False, screen_frame = 0):
 	pygameSurface = pygame.surfarray.make_surface (img.swapaxes(0,1))
+	scaledSurface = pygame.transform.scale(pygameSurface, imgFrame) 
 	if screen_frame == 0:
-		screen.blit (pygameSurface, firstFrame)
+		screen.blit (scaledSurface, firstFrame)
 	if screen_frame == 1:
-		screen.blit (pygameSurface, secondFrame)
+		screen.blit (scaledSurface, secondFrame)
 	if screen_frame == 2:
-		screen.blit (pygameSurface, thirdFrame)
+		screen.blit (scaledSurface, thirdFrame)
 	if screen_frame == 3:
-		screen.blit (pygameSurface, forthFrame)
+		screen.blit (scaledSurface, forthFrame)
 	if update:
 		pygame.display.update()
 
 def stickSpot (spot, update = False):
-	pygame.draw.line (screen, (255,0,0), (spot[0], spot[1]-5), (spot[0], spot[1]+5), 2)
-	pygame.draw.line (screen, (255,0,0), (spot[0]-5, spot[1]), (spot[0]+5, spot[1]), 2)
+	sx = imgFrame[0] / float(imgDimensions[0])
+	sy = imgFrame[1] / float(imgDimensions[1])
+	scaled_spot = (int(spot[0] *sx), int(spot[1]*sy))
+	pygame.draw.line (screen, (255,0,0), (scaled_spot[0], scaled_spot[1]-5), (scaled_spot[0], scaled_spot[1]+5), 2)
+	pygame.draw.line (screen, (255,0,0), (scaled_spot[0]-5, scaled_spot[1]), (scaled_spot[0]+5, scaled_spot[1]), 2)
 	textSurface = myfont.render ('X' + str(spot[0]) + ' Y' + str(spot[1]), True, (255,255,255))
 	screen.blit (textSurface, tuple(map(sum,zip(forthFrame, (30,40)))))
 	if update:
@@ -154,18 +160,19 @@ def __main__ ():
 		mask = detectSpot(image)
 		stickImg (mask, screen_frame = 1)
 
-		mouse_color = getPixelAtMouse ()
-		stickCUM (mouse_color)
+		#mouse_color = getPixelAtMouse ()
+		#stickCUM (mouse_color)
 
 		laserSpot = getSpot (mask)
 		if laserSpot is not None:
 			stickSpot (laserSpot)
 			p = laserSpot[0] - imgDimensions[0]/2
 			if p != 0:
-				distance = syscfg['f'] * (syscfg['D'] / (syscfg['k']*p))
+				distance = syscfg['f'] * (syscfg['D'] / float(syscfg['k']*p))
+				distance_txt = str(distance / 10.0)
 			else:
-				distance = 'INF'
-			stickDistance ('Distance: ' + distance + 'cm')
+				distance_txt = 'INF'
+			stickDistance ('Distance: ' + distance_txt + 'cm')
 
 		stickFPS ('FPS ' + str(clock.get_fps()))
 		if laser_on:
