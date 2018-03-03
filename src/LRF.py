@@ -22,8 +22,10 @@ forthFrame = None
 
 camera = picam.PiCamera()
 camera.resolution = imgDimensions 
-camera.framerate = 30
+camera.framerate = 40
 camera.led = False
+camera.iso = 30
+camera.exposure_mode = 'snow'
 rawCapture = PiRGBArray(camera, size=imgDimensions)
 
 syscfg = {'D': 24, 'f': -3.6, 'k': 0.0014} # all in mm
@@ -61,16 +63,17 @@ def initializePygame ():
 	forthFrame = (infoObj.current_w / 2, infoObj.current_h / 2)
 
 def stickImg (img, update = False, screen_frame = 0):
-	pygameSurface = pygame.surfarray.make_surface (img.swapaxes(0,1))
-	scaledSurface = pygame.transform.scale(pygameSurface, imgFrame) 
-	if screen_frame == 0:
-		screen.blit (scaledSurface, firstFrame)
-	if screen_frame == 1:
-		screen.blit (scaledSurface, secondFrame)
-	if screen_frame == 2:
-		screen.blit (scaledSurface, thirdFrame)
-	if screen_frame == 3:
-		screen.blit (scaledSurface, forthFrame)
+	if img is not None:
+		pygameSurface = pygame.surfarray.make_surface (img.swapaxes(0,1))
+		scaledSurface = pygame.transform.scale(pygameSurface, imgFrame) 
+		if screen_frame == 0:
+			screen.blit (scaledSurface, firstFrame)
+		if screen_frame == 1:
+			screen.blit (scaledSurface, secondFrame)
+		if screen_frame == 2:
+			screen.blit (scaledSurface, thirdFrame)
+		if screen_frame == 3:
+			screen.blit (scaledSurface, forthFrame)
 	if update:
 		pygame.display.update()
 
@@ -80,8 +83,8 @@ def stickSpot (spot, update = False):
 	scaled_spot = (int(spot[0] *sx), int(spot[1]*sy))
 	pygame.draw.line (screen, (255,0,0), (scaled_spot[0], scaled_spot[1]-5), (scaled_spot[0], scaled_spot[1]+5), 2)
 	pygame.draw.line (screen, (255,0,0), (scaled_spot[0]-5, scaled_spot[1]), (scaled_spot[0]+5, scaled_spot[1]), 2)
-	textSurface = myfont.render ('X' + str(spot[0]) + ' Y' + str(spot[1]), True, (255,255,255))
-	screen.blit (textSurface, tuple(map(sum,zip(forthFrame, (30,40)))))
+	#textSurface = myfont.render ('X' + str(spot[0]) + ' Y' + str(spot[1]), True, (255,255,255))
+	#screen.blit (textSurface, tuple(map(sum,zip(forthFrame, (30,40)))))
 	if update:
 		pygame.display.update()
 
@@ -93,45 +96,15 @@ def stickDistance (text, update = False):
 
 def stickFPS (text, update = False):
 	textSurface = myfont.render (text, True, (255,255,255))
-	screen.blit (textSurface, tuple(map(sum,zip(thirdFrame,(30,40)))))
-	if update:
-		pygame.display.update()
-
-def stickLsr (text, update = False):
-	textSurface = myfont.render (text, True, (255,255,255))
-	screen.blit (textSurface, tuple(map(sum,zip(thirdFrame,(30,70)))))
-	if update:
-		pygame.display.update()
-
-def stickCUM (color, update = False):
-	bgr = [color.b, color.g, color.r]
-	hsv = cv2.cvtColor (np.uint8([[bgr]]), cv2.COLOR_BGR2HSV)[0][0]
-	lab = cv2.cvtColor (np.uint8([[bgr]]), cv2.COLOR_BGR2LAB)[0][0]
-	textRGB = myfont.render ('R' + str(bgr[2]) + ' G' + str(bgr[1]) + ' B' + str(bgr[0]), True, (255,255,255))
-	textHSV = myfont.render ('H' + str(hsv[0]) + ' S' + str(hsv[1]) + ' V' + str(hsv[2]), True, (255,255,255))
-	textLAB = myfont.render ('L' + str(lab[0]) + ' A' + str(lab[1]) + ' B' + str(lab[2]), True, (255,255,255))
-	screen.blit (textRGB, tuple(map(sum,zip(thirdFrame,(30,100)))))
-	screen.blit (textHSV, tuple(map(sum,zip(thirdFrame,(30,130)))))
-	#screen.blit (textYCB, tuple(map(sum,zip(thirdFrame,(30,160)))))
-	screen.blit (textLAB, tuple(map(sum,zip(thirdFrame,(30,160)))))
+	screen.blit (textSurface, tuple(map(sum,zip(forthFrame,(30,10)))))
 	if update:
 		pygame.display.update()
 
 def cleanScreen ():
 	screen.fill ((0,0,0))
 
-def getPixelAtMouse ():
-	return screen.get_at (pygame.mouse.get_pos())
-
 def detectSpot (img):
-	# invert bgr
-	#inv_img = cv2.bitwise_not (img)
-	# convert to lab
-	#hsv_img = cv2.cvtColor (inv_img, cv2.COLOR_BGR2HSV)
 	lab_img = cv2.cvtColor (img, cv2.COLOR_BGR2LAB)
-	# look for high lightness
-	#lw_range = np.array([90 - 10, 70,  50 ], dtype =np.uint8)
-	#up_range = np.array([90 + 10, 255, 255], dtype =np.uint8)
 	lw_range = np.array([240, 0,  0], dtype =np.uint8)
 	up_range = np.array([255, 255, 255], dtype =np.uint8)
 	mask = cv2.inRange (lab_img, lw_range, up_range)
@@ -139,12 +112,16 @@ def detectSpot (img):
 	return mask
 
 def getSpot (mask):
-	spots = np.where (mask == 255)
+	spots = np.where (np.logical_and.reduce ((mask[0] == 255, mask[1] == 255, mask[2] == 255, mask[3] == 255, mask[4] == 255)), 255, 0)
+	return spots
+
+def getSpotPos (spots):
 	if spots[1].size == 0 or spots[0].size == 0:
 		return None
 	else:
-		cx = np.sum (spots[1]) / spots[1].size 
-		cy = np.sum (spots[0]) / spots[0].size 
+		tmp = np.where (spots == 255)
+		cx = np.sum (tmp[1]) / tmp[1].size 
+		cy = np.sum (tmp[0]) / tmp[0].size 
 		return (cx, cy)
 
 def __main__ ():
@@ -153,34 +130,58 @@ def __main__ ():
 	laserSETUP ()
 	initializePygame ()
 	laserOFF ()
-	laser_on = False
+	bg_mask = None
+	distance_txt = 'INF'
+	mask = []
+	spots = None
+	phase = 0
 
 	for frame in camera.capture_continuous (rawCapture, format ="bgr", use_video_port=True):
 		image = np.copy (frame.array) 
 		cleanScreen ()
-		stickImg (image)
-		mask = detectSpot(image)
-		stickImg (mask, screen_frame = 1)
 
-		#mouse_color = getPixelAtMouse ()
-		#stickCUM (mouse_color)
+		if phase == 0:
+			bg_mask = detectSpot(image)
+			laserON ()
+			mask = []
+			phase = 1
+		elif phase == 1:
+			mask.append (detectSpot(image) - bg_mask)
+			stickImg (mask[-1], screen_frame = 2)
+			phase = 2
+		elif phase == 2:
+			mask.append (detectSpot(image) - bg_mask)
+			stickImg (mask[-1], screen_frame = 2)
+			phase = 3
+		elif phase == 3:
+			mask.append (detectSpot(image) - bg_mask)
+			stickImg (mask[-1], screen_frame = 2)
+			phase = 4
+		elif phase == 4:
+			mask.append (detectSpot(image) - bg_mask)
+			stickImg (mask[-1], screen_frame = 2)
+			phase = 5
+		else:
+			mask.append (detectSpot(image) - bg_mask)
+			stickImg (mask[-1], screen_frame = 2)
+			laserOFF ()
+			phase = 0
 
-		laserSpot = getSpot (mask)
-		if laserSpot is not None:
-			stickSpot (laserSpot)
-			p = laserSpot[0] - imgDimensions[0]/2
-			if p != 0:
-				distance = syscfg['f'] * (syscfg['D'] / float(syscfg['k']*p))
-				distance_txt = str(distance / 10.0)
-			else:
-				distance_txt = 'INF'
-			stickDistance ('Distance: ' + distance_txt + 'cm')
+			spots = getSpot (mask)
+			laserSpot = getSpotPos (spots)
+			if laserSpot is not None:
+				stickSpot (laserSpot)
+				p = laserSpot[0] - imgDimensions[0]/2
+				if p != 0:
+					distance = syscfg['f'] * (syscfg['D'] / float(syscfg['k']*p))
+					distance_txt = str(distance / 10.0)
+				else:
+					distance_txt = 'INF'
 
 		stickFPS ('FPS ' + str(clock.get_fps()))
-		if laser_on:
-			stickLsr ('Laser ON', update = True)
-		else:
-			stickLsr ('Laser OFF', update = True)
+		stickImg (spots, screen_frame = 1)
+		stickDistance ('Distance: ' + distance_txt + 'cm')
+		stickImg (image, update = True)
 		
 		clock.tick ()
 		for event in pygame.event.get ():
@@ -192,12 +193,7 @@ def __main__ ():
 				pygame.quit ()
 				GPIO.cleanup ()
 				return
-			if event.type == KEYDOWN and event.key == K_l:
-				laserON ()	
-				laser_on = True
-			if event.type == KEYDOWN and event.key == K_d:
-				laserOFF ()	
-				laser_on = False
+
 		rawCapture.truncate(0)
 	
 	camera.close()

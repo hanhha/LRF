@@ -147,6 +147,12 @@ def getSpot (mask):
 		cy = np.sum (spots[0]) / spots[0].size 
 		return (cx, cy)
 
+def shot ():
+	camera.capture (rawCapture, format="bgr")
+	image = rawCapture.array
+	rawCapture.truncate (0)
+	return image
+
 def __main__ ():
 	GPIO.cleanup ()
 	GPIO.setmode (GPIO.BOARD)
@@ -155,53 +161,33 @@ def __main__ ():
 	laserOFF ()
 	laser_on = False
 
-	for frame in camera.capture_continuous (rawCapture, format ="bgr", use_video_port=True):
-		image = np.copy (frame.array) 
-		cleanScreen ()
-		stickImg (image)
-		mask = detectSpot(image)
-		stickImg (mask, screen_frame = 1)
+	image0 = shot ()
+	bg_msk = detectSpot (image0)
+	laserON ()
+	laser_on = True
+	time.sleep (5)
+	image1 = shot ()
+	fg_msk = detectSpot (image1) - bg_msk
 
-		#mouse_color = getPixelAtMouse ()
-		#stickCUM (mouse_color)
-
-		laserSpot = getSpot (mask)
-		if laserSpot is not None:
-			stickSpot (laserSpot)
-			p = laserSpot[0] - imgDimensions[0]/2
-			if p != 0:
-				distance = syscfg['f'] * (syscfg['D'] / float(syscfg['k']*p))
-				distance_txt = str(distance / 10.0)
-			else:
-				distance_txt = 'INF'
-			stickDistance ('Distance: ' + distance_txt + 'cm')
-
-		stickFPS ('FPS ' + str(clock.get_fps()))
-		if laser_on:
-			stickLsr ('Laser ON', update = True)
-		else:
-			stickLsr ('Laser OFF', update = True)
-		
-		clock.tick ()
+	stickImg (image0)
+	stickImg (image1, screen_frame = 1)
+	stickImg (bg_msk, screen_frame = 2)
+	stickImg (fg_msk, screen_frame = 3, update = True)
+	
+	escape = False
+	while not escape:
 		for event in pygame.event.get ():
 			if event.type == QUIT:
+				camera.close()
 				pygame.quit ()
 				GPIO.cleanup ()
 				sys.exit ()
 			if event.type == KEYDOWN and event.key == K_q:
-				pygame.quit ()
-				GPIO.cleanup ()
-				return
-			if event.type == KEYDOWN and event.key == K_l:
-				laserON ()	
-				laser_on = True
-			if event.type == KEYDOWN and event.key == K_d:
-				laserOFF ()	
-				laser_on = False
-		rawCapture.truncate(0)
+				escape = True	
 	
 	camera.close()
 	pygame.quit ()
+	laserOFF ()
 	GPIO.cleanup ()
 
 # call main
