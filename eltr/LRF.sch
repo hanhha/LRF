@@ -71,7 +71,7 @@ U 1 1 598F1A70
 P 5750 3400
 F 0 "R2" V 5830 3400 50  0000 C CNN
 F 1 "10K" V 5750 3400 50  0000 C CNN
-F 2 "Resistors_ThroughHole:Resistor_Horizontal_RM7mm" V 5680 3400 50  0001 C CNN
+F 2 "Resistors_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 5680 3400 50  0001 C CNN
 F 3 "" H 5750 3400 50  0000 C CNN
 	1    5750 3400
 	1    0    0    -1  
@@ -79,12 +79,12 @@ $EndComp
 $Comp
 L R R1
 U 1 1 598F1A93
-P 5300 2900
-F 0 "R1" V 5380 2900 50  0000 C CNN
-F 1 "100" V 5300 2900 50  0000 C CNN
-F 2 "Resistors_ThroughHole:Resistor_Horizontal_RM7mm" V 5230 2900 50  0001 C CNN
-F 3 "" H 5300 2900 50  0000 C CNN
-	1    5300 2900
+P 5100 2900
+F 0 "R1" V 5180 2900 50  0000 C CNN
+F 1 "100" V 5100 2900 50  0000 C CNN
+F 2 "Resistors_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 5030 2900 50  0001 C CNN
+F 3 "" H 5100 2900 50  0000 C CNN
+	1    5100 2900
 	0    1    1    0   
 $EndComp
 $Comp
@@ -93,7 +93,7 @@ U 1 1 598F1BB0
 P 5750 2400
 F 0 "D1" H 5750 2500 50  0000 C CNN
 F 1 "Laser diode" H 5750 2300 50  0000 C CNN
-F 2 "Diodes_ThroughHole:Diode_TO-220_Vertical" H 5750 2400 50  0001 C CNN
+F 2 "TO_SOT_Packages_THT:TO-220-2_Vertical" H 5750 2400 50  0001 C CNN
 F 3 "" H 5750 2400 50  0000 C CNN
 	1    5750 2400
 	0    -1   -1   0   
@@ -144,10 +144,8 @@ F 3 "" H 4650 2250 50  0000 C CNN
 $EndComp
 Text GLabel 4600 2700 2    60   Input ~ 0
 GPIO
-Text GLabel 5000 2900 0    60   Input ~ 0
+Text GLabel 4750 3100 2    60   Input ~ 0
 GPIO
-Wire Wire Line
-	5000 2900 5150 2900
 Wire Wire Line
 	5750 2250 5750 2150
 Wire Wire Line
@@ -175,7 +173,7 @@ U 1 1 598F2665
 P 4050 2000
 F 0 "P1" H 4050 2250 50  0000 C CNN
 F 1 "CONN_01X04" V 4150 2000 50  0000 C CNN
-F 2 "Socket_Strips:Socket_Strip_Straight_1x04" H 4050 2000 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Angled_1x04_Pitch2.54mm" H 4050 2000 50  0001 C CNN
 F 3 "" H 4050 2000 50  0000 C CNN
 	1    4050 2000
 	-1   0    0    1   
@@ -208,4 +206,64 @@ F 3 "" H 4800 2250 50  0000 C CNN
 	0    1    1    0   
 $EndComp
 Connection ~ 4650 2250
+$Comp
+L R R3
+U 1 1 59948709
+P 5100 3300
+F 0 "R3" V 5180 3300 50  0000 C CNN
+F 1 "1K" V 5100 3300 50  0000 C CNN
+F 2 "Resistors_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 5030 3300 50  0001 C CNN
+F 3 "" H 5100 3300 50  0000 C CNN
+	1    5100 3300
+	0    1    1    0   
+$EndComp
+$Comp
+L CONN_01X03_MALE J1
+U 1 1 599487AA
+P 4350 3100
+F 0 "J1" H 4350 3375 50  0000 C CNN
+F 1 "CONN_01X03_MALE" H 4375 2825 50  0000 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_1x03_Pitch2.54mm" H 4350 3300 50  0001 C CNN
+F 3 "" H 4350 3300 50  0001 C CNN
+	1    4350 3100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4650 2900 4950 2900
+Wire Wire Line
+	4750 3100 4650 3100
+Wire Wire Line
+	4950 3300 4650 3300
+Wire Wire Line
+	5250 2900 5450 2900
+Wire Wire Line
+	5250 3300 5350 3300
+Wire Wire Line
+	5350 3300 5350 2900
+Connection ~ 5350 2900
+$Comp
+L CONN_01X02_MALE J2
+U 1 1 599488EE
+P 6300 3350
+F 0 "J2" H 6300 3525 50  0000 C CNN
+F 1 "CONN_01X02_MALE" H 6300 3150 50  0000 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_1x02_Pitch2.54mm" H 6300 3450 50  0001 C CNN
+F 3 "" H 6300 3450 50  0001 C CNN
+	1    6300 3350
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	6000 3250 5900 3250
+Wire Wire Line
+	5900 3250 5900 3150
+Wire Wire Line
+	5900 3150 5750 3150
+Connection ~ 5750 3150
+Wire Wire Line
+	6000 3450 5900 3450
+Wire Wire Line
+	5900 3450 5900 3600
+Wire Wire Line
+	5900 3600 5750 3600
+Connection ~ 5750 3600
 $EndSCHEMATC
